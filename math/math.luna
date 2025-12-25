@@ -1,0 +1,37 @@
+;; [ Square Root (using Newton–Raphson method) ]
+(function sqrt (x)
+  (do
+   (defvar rt 1)
+   (defvar ort 0)
+   (while (!= ort rt)
+    (do
+     (defvar ort rt)
+     (defvar rt (bind c (/ x rt) (+ c rt) (/ c 2)))))
+   rt))
+
+;; [ Power (using Squared Exponentiation) ]
+(function pow (a n)
+ (do
+  (defvar r 1)
+  (while (> n 0)
+   (do
+    (if (= 1 (mod n 2)) (defvar r (* r a)) 0)
+    (defvar a (* a a))
+    (defvar n (int (/ n 2)))))
+  r))
+
+;; [ Floor ]
+(function floor (x)
+ (do
+  (bind y x (str y) (split "." y) (fst y) (int y))))
+
+;; [ Ceil ]
+(function ceil (x)
+ (do
+  (bind y x (str y) (split "." y) (fst y) (int y) (+ 1 y))))
+
+;; [ Round ]
+(function round (x)
+ (do
+  (defvar z (bind y x (str y) (split "." y) (fst y) (int y)))
+  (if (> x (+ 0.5 z)) (+ 1 z) z)))

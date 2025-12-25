@@ -1,0 +1,17 @@
+(include "../../math/math.luna")
+
+(writeln (sqrt 25))
+(writeln (sqrt 22))
+
+(writeln (pow 2 5))
+(writeln (pow 1 6))
+(writeln (pow 3 3))
+
+(writeln (floor 2.6))
+(writeln (floor 1145.9))
+
+(writeln (ceil 2.6))
+(writeln (ceil 1463.9))
+
+(writeln (round 2.5))
+(writeln (round 2.6))
