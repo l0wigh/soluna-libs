@@ -1,0 +1,4 @@
+(include "../../libs/random/random.luna")
+
+(writeln (concat "Random unix: " (str (rand-unix))))
+(writeln (concat "Random seeded: " (str (fst (rand 1)))))

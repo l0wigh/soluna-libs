@@ -1,0 +1,37 @@
+;; [json-is-indent]
+;; Simple function that returns true on indentation (prettyfication) of JSON files
+(function json-is-indent (c)
+ (match c
+  ((any "\n" "\t" "\r") false)
+  (default true)))
+
+;; [json-remove-indent]
+;; Take a JSON string and remove indentation characters
+(function json-remove-indent (data)
+ (bind x
+  (explode data)
+  (filter json-is-indent x)
+  (implode x)))
+
+;; [json-object-to-sexp]
+;; Take a JSON object character and transform it to an sexp character
+(function json-object-to-sexp (c)
+ (match c
+  ((any "{" "[") "(list ")
+  ((any "}" "]") ")")
+  (":" " ")
+  ("," ")(list ")
+  (default c)))
+
+;; [json-parse-file]
+;; Main function that parse JSON object files
+(function json-parse-file (file)
+ (do
+  (defvar json-data (read-file file))
+  (bind x
+   (explode json-data)
+   (map json-object-to-sexp x)
+   (implode x)
+   (concat "(list " x)
+   (concat x ")")
+   (eval x))))

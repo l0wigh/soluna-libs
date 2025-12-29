@@ -1,4 +1,4 @@
-(include "../../math/math.luna")
+(include "../../libs/math/math.luna")
 
 (writeln (sqrt 25))
 (writeln (sqrt 22))

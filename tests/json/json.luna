@@ -1,0 +1,10 @@
+(include "../../libs/json/json.luna")
+
+(defvar parsed-data (json-parse-file "./test.json"))
+(each company parsed-data
+ (do
+  (writeln (concat "Name of the company: " (fst (rst (get 1 company)))))
+  (writeln (concat "Founded: " (str (fst (rst (get 2 company))))))
+  (writeln (concat "Active: " (if (= true (fst (rst (get 3 company)))) "Yes" "No")))
+  (writeln (concat "Country: " (fst (rst (get 2 (rst (get 4 company)))))))
+  (writeln "----------------")))

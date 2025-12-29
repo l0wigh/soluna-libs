@@ -26,5 +26,3 @@
    (int x)
    (rand x)
    (fst x))))
-
-(writeln (rand-unix))

@@ -1,0 +1,286 @@
+{
+  "company": {
+      "name": "TechCorp Solutions",
+      "founded": 2015,
+      "active": false,
+      "headquarters": {
+        "city": "San Francisco",
+        "state": "CA",
+        "country": "USA",
+        "coordinates": {
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        }
+      },
+      "departments": [
+        {
+          "id": "dept-001",
+          "name": "Engineering",
+          "employeeCount": 45,
+          "budget": 2500000,
+          "teams": [
+            {
+              "name": "Backend",
+              "lead": "Alice Johnson",
+              "members": 12,
+              "technologies": ["Node.js", "Python", "PostgreSQL"]
+            },
+            {
+              "name": "Frontend",
+              "lead": "Bob Smith",
+              "members": 15,
+              "technologies": ["React", "TypeScript", "CSS"]
+            }
+          ]
+        },
+        {
+          "id": "dept-002",
+          "name": "Marketing",
+          "employeeCount": 20,
+          "budget": 1200000,
+          "campaigns": [
+            {
+              "title": "Q4 Launch",
+              "status": "active",
+              "startDate": "2024-10-01",
+              "endDate": "2024-12-31",
+              "channels": ["social", "email", "paid-ads"]
+            }
+          ]
+        }
+      ],
+      "products": [
+        {
+          "id": "prod-101",
+          "name": "CloudSync Pro",
+          "version": "3.2.1",
+          "price": {
+            "currency": "USD",
+            "monthly": 29.99,
+            "annual": 299.99
+          },
+          "features": [
+            "Unlimited storage",
+            "Real-time sync",
+            "Team collaboration",
+            "Advanced security"
+          ],
+          "availability": {
+            "regions": ["US", "EU", "APAC"],
+            "languages": ["en", "es", "fr", "de", "ja"]
+          }
+        }
+      ],
+      "metadata": {
+        "lastUpdated": "2024-12-29T10:30:00Z",
+        "updatedBy": "admin@techcorp.com",
+        "version": 5,
+        "tags": ["enterprise", "b2b", "saas"]
+      }
+    },
+    "company": {
+      "name": "DataFlow Analytics",
+      "founded": 2018,
+      "active": true,
+      "headquarters": {
+        "city": "London",
+        "state": null,
+        "country": "UK",
+        "coordinates": {
+          "latitude": 51.5074,
+          "longitude": -0.1278
+        }
+      },
+      "departments": [
+        {
+          "id": "dept-101",
+          "name": "Data Science",
+          "employeeCount": 32,
+          "budget": 1800000,
+          "teams": [
+            {
+              "name": "Machine Learning",
+              "lead": "Emily Chen",
+              "members": 18,
+              "technologies": ["Python", "TensorFlow", "PyTorch", "Scikit-learn"]
+            },
+            {
+              "name": "Analytics",
+              "lead": "Marcus Williams",
+              "members": 14,
+              "technologies": ["R", "SQL", "Tableau", "Power BI"]
+            }
+          ]
+        },
+        {
+          "id": "dept-102",
+          "name": "Sales",
+          "employeeCount": 15,
+          "budget": 900000,
+          "campaigns": [
+            {
+              "title": "Enterprise Outreach 2024",
+              "status": "completed",
+              "startDate": "2024-01-15",
+              "endDate": "2024-11-30",
+              "channels": ["direct-sales", "webinars", "trade-shows"]
+            }
+          ]
+        }
+      ],
+      "products": [
+        {
+          "id": "prod-201",
+          "name": "InsightEngine",
+          "version": "2.5.0",
+          "price": {
+            "currency": "GBP",
+            "monthly": 199.99,
+            "annual": 1999.99
+          },
+          "features": [
+            "Predictive analytics",
+            "Custom dashboards",
+            "API integration",
+            "Real-time data processing"
+          ],
+          "availability": {
+            "regions": ["EU", "US", "UK"],
+            "languages": ["en", "de", "fr"]
+          }
+        },
+        {
+          "id": "prod-202",
+          "name": "DataViz Studio",
+          "version": "1.8.3",
+          "price": {
+            "currency": "GBP",
+            "monthly": 49.99,
+            "annual": 499.99
+          },
+          "features": [
+            "Drag-and-drop interface",
+            "100+ chart types",
+            "Export to PDF/PNG",
+            "Team sharing"
+          ],
+          "availability": {
+            "regions": ["Global"],
+            "languages": ["en", "es", "fr", "de", "zh", "ja"]
+          }
+        }
+      ],
+      "metadata": {
+        "lastUpdated": "2024-12-28T15:45:00Z",
+        "updatedBy": "system@dataflow.co.uk",
+        "version": 8,
+        "tags": ["analytics", "big-data", "enterprise", "b2b"]
+      }
+    },
+    "company": {
+      "name": "GreenLeaf Organics",
+      "founded": 2020,
+      "active": true,
+      "headquarters": {
+        "city": "Portland",
+        "state": "OR",
+        "country": "USA",
+        "coordinates": {
+          "latitude": 45.5152,
+          "longitude": -122.6784
+        }
+      },
+      "departments": [
+        {
+          "id": "dept-201",
+          "name": "Operations",
+          "employeeCount": 28,
+          "budget": 850000,
+          "teams": [
+            {
+              "name": "Supply Chain",
+              "lead": "Sarah Martinez",
+              "members": 12,
+              "technologies": ["SAP", "Odoo", "Excel"]
+            },
+            {
+              "name": "Quality Control",
+              "lead": "David Park",
+              "members": 8,
+              "technologies": ["TrackWise", "MasterControl"]
+            }
+          ]
+        },
+        {
+          "id": "dept-202",
+          "name": "E-commerce",
+          "employeeCount": 18,
+          "budget": 650000,
+          "campaigns": [
+            {
+              "title": "Holiday Season 2024",
+              "status": "active",
+              "startDate": "2024-11-15",
+              "endDate": "2025-01-10",
+              "channels": ["instagram", "facebook", "email", "influencers"]
+            },
+            {
+              "title": "Spring Launch",
+              "status": "planned",
+              "startDate": "2025-03-01",
+              "endDate": "2025-04-30",
+              "channels": ["social", "email", "content-marketing"]
+            }
+          ]
+        }
+      ],
+      "products": [
+        {
+          "id": "prod-301",
+          "name": "Organic Wellness Box",
+          "version": null,
+          "price": {
+            "currency": "USD",
+            "monthly": 39.99,
+            "annual": null
+          },
+          "features": [
+            "100% organic ingredients",
+            "Sustainably sourced",
+            "Monthly variety",
+            "Free shipping"
+          ],
+          "availability": {
+            "regions": ["US", "CA"],
+            "languages": ["en"]
+          }
+        },
+        {
+          "id": "prod-302",
+          "name": "Superfood Smoothie Mix",
+          "version": null,
+          "price": {
+            "currency": "USD",
+            "monthly": null,
+            "annual": 89.99
+          },
+          "features": [
+            "15 superfood blends",
+            "Vegan friendly",
+            "No added sugar",
+            "Recyclable packaging"
+          ],
+          "availability": {
+            "regions": ["US", "CA", "EU"],
+            "languages": ["en", "fr", "es"]
+          }
+        }
+      ],
+      "metadata": {
+        "lastUpdated": "2024-12-29T08:20:00Z",
+        "updatedBy": "admin@greenleaf.com",
+        "version": 3,
+        "tags": ["organic", "wellness", "b2c", "sustainable"]
+      }
+    }
+}
