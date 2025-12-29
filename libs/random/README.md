@@ -1,4 +1,4 @@
-# Math Library
+# Random Library
 
 Some PRNG functions. Nothing too fancy.
 
