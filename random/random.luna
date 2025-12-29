@@ -1,0 +1,30 @@
+;; [rand]
+;; Gives a random number based on a seed and gives the next function call with the next seed.
+(function rand (seed)
+  (do
+    (defvar next (+ 12345 (* seed 1103515245)))
+    (list (mod (/ next 65536) 32768) (rand-gen next))))
+
+;; [rand-gen]
+;; Generate a function call to get the next random number and the next seed.
+(defmacro rand-gen (seed)
+ `(lambda ()
+   (rand ,seed)))
+
+;; [rand-next]
+;; Use the function call to get the next random number and next function call
+(function rand-next (randlist) ((fst (rst randlist))))
+
+;; [rand-unix]
+;; Random number using unix time as seed
+(function rand-unix ()
+ (do
+  (bind x
+   (cmd "date +%s")
+   (split "\n" x)
+   (fst x)
+   (int x)
+   (rand x)
+   (fst x))))
+
+(writeln (rand-unix))

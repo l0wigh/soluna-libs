@@ -28,7 +28,9 @@
 ;; [ Ceil ]
 (function ceil (x)
  (do
-  (bind y x (str y) (split "." y) (fst y) (int y) (+ 1 y))))
+  (if (= "Integer" (type x))
+   x
+   (bind y x (str y) (split "." y) (fst y) (int y) (+ 1 y)))))
 
 ;; [ Round ]
 (function round (x)
