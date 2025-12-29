@@ -37,3 +37,19 @@
  (do
   (defvar z (bind y x (str y) (split "." y) (fst y) (int y)))
   (if (> x (+ 0.5 z)) (+ 1 z) z)))
+
+;; [ Clamp ]
+(function clamp (x minimum maximum)
+  (max minimum (min x maximum))) ;; so confusing xD
+
+;; [ Max ]
+(function max (a b)
+  (if (> a b) a b))
+
+;; [ Min ]
+(function min (a b)
+  (if (< a b) a b))
+
+;; [ Abs ]
+(function abs (x)
+  (if (< x 0) (- x) x))

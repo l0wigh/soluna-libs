@@ -26,3 +26,21 @@
    (int x)
    (rand x)
    (fst x))))
+
+;; [rand-range]
+;; Random number within a range 
+;; Returns a float, might not be ideal
+(function rand-range (min max)
+  (do 
+    (defvar r (rand-unix))
+    (defvar range (- max min))
+    (+ min (mod r range))))
+
+;; [rand-list]
+;; Random element out of a list
+(function rand-list (list)
+  (do
+    (defvar random-num (rand-unix))
+    (defvar len (length list))
+    (defvar index (int (mod random-num len)))
+    (get index list)))
