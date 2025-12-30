@@ -2,3 +2,9 @@
 
 (writeln (concat "Random unix: " (str (rand-unix))))
 (writeln (concat "Random seeded: " (str (fst (rand 1)))))
+
+  
+(defvar colors (list "red" "blue" "yellow"))
+(writeln (rand-list colors))
+
+(writeln (rand-range 0 10)) ;; error here

@@ -9,3 +9,7 @@ Simple math library to help get more from simple arithmetics in Soluna
 - `(floor Number)`
 - `(pow Number Number)`
 - `(sqrt Number)`
+- `(abs Number)`
+- `(clamp Number)`
+- `(max Number, Number)`
+- `(min Number, Number)`
