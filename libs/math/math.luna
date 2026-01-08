@@ -52,4 +52,4 @@
 
 ;; [ Abs ]
 (function abs (x)
-  (if (< x 0) (- x) x))
+  (sqrt (pow x 2)))
