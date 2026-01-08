@@ -22,3 +22,8 @@
 
 (writeln (clamp 5 10 20))
 (writeln (clamp 25 10 20))
+
+(writeln (abs -10))
+(writeln (abs -69.420))
+
+(writeln (neg 10))

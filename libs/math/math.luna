@@ -40,16 +40,20 @@
 
 ;; [ Clamp ]
 (function clamp (x minimum maximum)
-  (max minimum (min x maximum))) ;; so confusing xD
+ (max minimum (min x maximum))) ;; so confusing xD
 
 ;; [ Max ]
 (function max (a b)
-  (if (> a b) a b))
+ (if (> a b) a b))
 
 ;; [ Min ]
 (function min (a b)
-  (if (< a b) a b))
+ (if (< a b) a b))
 
 ;; [ Abs ]
 (function abs (x)
-  (sqrt (pow x 2)))
+ (sqrt (pow x 2)))
+
+;; [ Neg ]
+(function neg (x)
+ (if (> x 0) (* -1 x) x))
