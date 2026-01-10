@@ -1,0 +1,24 @@
+(include "../math/math.luna")
+
+;; [ to-bit ]
+(function to-bit (n)
+ (if (= n 0) 0 1))
+
+;; [ div-int ]
+;; mostly usefull for get-bit
+(function div-int (a b)
+ (- (/ a b) (mod (/ a b) 1)))
+
+;; [ get-bit ]
+(function get-bit (n pos)
+ (mod (div-int n (pow 2 pos)) 2))
+
+;; [ has-bit ]
+(function has-bit (n pos)
+ (= (get-bit n pos) 1))
+
+;; [ set-bit ]
+(function set-bit (n pos)
+ (if (has-bit n pos)
+  n
+  (+ n (pow 2 pos))))
