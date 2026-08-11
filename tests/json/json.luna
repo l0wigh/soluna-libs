@@ -1,10 +1,12 @@
+(include "../tester.luna")
 (include "../../libs/json/json.luna")
 
-(defvar parsed-data (json-parse-file "./test.json"))
-(each company parsed-data
- (do
-  (writeln (concat "Name of the company: " (fst (rst (get 1 company)))))
-  (writeln (concat "Founded: " (str (fst (rst (get 2 company))))))
-  (writeln (concat "Active: " (if (= true (fst (rst (get 3 company)))) "Yes" "No")))
-  (writeln (concat "Country: " (fst (rst (get 2 (rst (get 4 company)))))))
-  (writeln "----------------")))
+(defvar parsed-data
+  (try
+   (json-parse-file "./test.json")
+   (_ (json-parse-file "./json/test.json"))))
+(defvar company (fst parsed-data))
+(tester "JSON" "Company name" (fst (rst (get 1 company))) "TechCorp Solutions")
+(tester "JSON" "Company founded" (fst (rst (get 2 company))) 2015)
+(tester "JSON" "Company active" (type (fst (rst (get 3 company)))) (type false))
+(tester "JSON" "Company country" (fst (rst (get 2 (rst (get 4 company))))) "USA")

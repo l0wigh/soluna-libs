@@ -1,0 +1,4 @@
+(defmacro tester (name desc to-test expected)
+    `(if (= ,to-test ,expected)
+         (writeln (concat "[TEST " ,name "] " ,desc " (passed)") :green)
+         (writeln (concat "[TEST " ,name "] " ,desc " (failed)") :red)))

@@ -1,0 +1,38 @@
+(defmacro when-true (cond body)
+  `(if ,cond ,body ()))
+
+(defvar format-state (dict 3))
+
+(defmacro format (do-print raw-string &rest values)
+  `(do
+    (dict-set format-state "values-list" (list ,@values))
+    (dict-set format-state "formated-string" "")
+    (dict-set format-state "formating" false)
+    (each char (explode ,raw-string)
+          (do
+           (match char
+            ("%" (when (dict-get format-state "formating"))
+             (do
+              (dict-set format-state "formating" false)
+              (defvar x (dict-get format-state "formated-string"))
+              (dict-set format-state "formated-string" (concat x "%"))))
+            ("%"
+             (do
+              (dict-set format-state "formating" true)))
+            ("v" (when (dict-get format-state "formating"))
+             (do
+              (dict-set format-state "formating" false)
+              (defvar x (dict-get format-state "formated-string"))
+              (defvar y (dict-get format-state "values-list"))
+              (when-true (!= 0 (length y))
+                         (do
+                          (if (!= "String" (type (fst y)))
+                              (dict-set format-state "formated-string" (concat x (str (fst y))))
+                              (dict-set format-state "formated-string" (concat x (fst y))))
+                          (dict-set format-state "values-list" (rst y))))))
+            (default
+             (do
+              (defvar x (dict-get format-state "formated-string"))
+              (dict-set format-state "formated-string" (concat x char)))))))
+    (when-true ,do-print (write (dict-get format-state "formated-string")))
+    (dict-get format-state "formated-string")))

@@ -1,0 +1,6 @@
+(include "../tester.luna")
+(include "../../libs/format/format.luna")
+
+(tester "Format" "Basic format" (format false "%v" "Soluna") "Soluna")
+(tester "Format" "Multi format" (format false "%v %v" "Mystical" "Soluna") "Mystical Soluna")
+(tester "Format" "Mixed format" (format false "%v %v" 1145 "Soluna") "1145 Soluna")
