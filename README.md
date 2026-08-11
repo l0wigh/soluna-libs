@@ -11,6 +11,7 @@ This will only work in Soluna project folders.
 - [math](https://github.com/l0wigh/soluna-libs/tree/master/libs/math)
 - [random](https://github.com/l0wigh/soluna-libs/tree/master/libs/random)
 - [json](https://github.com/l0wigh/soluna-libs/tree/master/libs/json)
+- [format](https://github.com/l0wigh/soluna-libs/tree/master/libs/format)
 
 ## Your library here ?
 
