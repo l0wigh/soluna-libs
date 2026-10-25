@@ -43,7 +43,7 @@
 
 (function walk (x s)
 	(do 
-		(if (!= (type x) "List")
+		(if (is-variable? x)
 			(do
 				(defvar i 0)
 				(defvar found -1)
