@@ -152,7 +152,9 @@
 	(if (= i (length *base*))
 		(list)
 		(concat
-			(solve-one-rule goal s depth (get i *base*))
+			(if (= (get 0 (get 0 (get i *base*))) (get 0 goal))
+				(solve-one-rule goal s depth (get i *base*))
+				(list))
 			(solve-rules goal s depth (+ i 1)))))
 (function query (goal)
 	(map (lambda (s) (resolve goal s))
