@@ -1,0 +1,187 @@
+; Helpers functions
+
+(function is-empty? (x) (= x nil))
+
+(function is-list? (x)
+	(= (type x) "List"))
+
+(function is-integer? (x)
+	(= (type x) "Integer"))
+
+(function same-length? (x y)
+	(= (length x) (length y)))
+
+(function contains? (lst elem)
+	(if (= nil (filter (lambda (x) (= x elem)) lst))
+		false
+		true))
+
+(function is-variable? (x)
+	(if (= (type x) "Symbol")
+		(= "?" (get 0 (symbol->string x)))
+		false))
+
+(function _variable-from-loop (term acc)
+	(if (= (type term) "List")
+		(do
+			(each t term (set! acc (_variable-from-loop t acc)))
+			acc)
+		(if (is-variable? term)
+			(if (contains? acc term)
+				acc
+				(cons term acc))
+			acc)))
+(function variable-from (term)
+	(_variable-from-loop term (list)))
+
+(function rename (term suffix)
+	(if (= (type term) "List")
+		(map (lambda (t) (rename t suffix)) term)
+		(if (is-variable? term)
+			(string->symbol (concat (symbol->string term) suffix))
+			term)))
+
+(function walk (x s)
+	(do 
+		(if (!= (type x) "List")
+			(do
+				(defvar i 0)
+				(defvar found -1)
+				(while (< i (length s))
+					(do
+						(if (= x (get 0 (get i s)))
+							(do (defvar found i) (defvar i (length s)))
+							())
+						(defvar i (+ 1 i))))
+				(if (!= found -1) (walk (get 1 (get found s)) s) x))
+			x)))
+
+(function resolve (x s)
+	(do
+		(defvar w (walk x s))
+		(if (= (type w) "List")
+			(map (lambda (e) (resolve e s)) w)
+			w)))
+
+(defvar FAIL -1)
+(function any-occurs? (v lst i s)
+	(if (= i (length lst))
+		false
+		(if (occurs? v (get i lst) s)
+			true
+			(any-occurs? v lst (+ i 1) s))))
+(function occurs? (v t s)
+	(do
+		(defvar w (walk t s))
+		(if (is-list? w)
+			(any-occurs? v w 0 s)
+			(if (is-variable? w)
+				(= v w)
+				false))))
+(function unify-bind (v t s)
+	(if (occurs? v t s)
+		FAIL
+		(concat s (list (list v t)))))
+(function failed? (s)
+	(is-integer? s))
+(function unify-from (i x y s)
+	(if (= i (length x))
+	  s
+	  (unify-from (+ i 1) x y (unify (get i x) (get i y) s))))
+(function unify-walked (x y s)
+	(if (if (= (type x) (type y)) (= x y) false)
+		s
+		(if (is-variable? x)
+			(unify-bind x y s)
+			(if (is-variable? y)
+				(unify-bind y x s)
+				(if (is-list? x)
+					(if (is-list? y)
+						(if (same-length? x y)
+							(unify-from 0 x y s)
+							FAIL)
+						FAIL)
+					FAIL)))))
+(function unify (a b s)
+	(if (failed? s)
+		FAIL
+		(unify-walked (walk a s) (walk b s) s)))
+
+(function flatten-from (lists i)
+	(if (= i (length lists))
+	  (list)
+	  (concat (get i lists) (flatten-from lists (+ i 1)))))
+(function flatten (lists)
+	(flatten-from lists 0))
+(function list-if-ok (r)
+	(if (failed? r)
+	  (list)
+	  (list r)))
+(function unify-as-list (a b s)
+	(list-if-ok (unify a b s)))
+(defvar COUNTER 0)
+(function fresh-suffix ()
+	(do
+		(set! COUNTER (+ COUNTER 1))
+		(concat "/" (str COUNTER))))
+(defvar MAX 50)
+(defvar *base* (list))
+(function solve-goal (goal s depth)
+	(if (> depth MAX)
+		(list)
+		(if (= (get 0 goal) 'not)
+			(if (= (length (solve-goal (get 1 goal) s (+ depth 1))) 0)
+				(list s)
+				(list)
+			)
+			(if (= (get 0 goal) 'equal)
+				(unify-as-list (get 1 goal) (get 2 goal) s)
+				(solve-rules goal s depth 0)))))
+(function solve-goal-from (goals i s depth)
+	(if (= i (length goals))
+		(list s)
+		(flatten (map (lambda (s2) (solve-goal-from goals (+ i 1) s2 depth)) (solve-goal (get i goals) s depth)))))
+(function solve-goals (goals s depth)
+	(solve-goal-from goals 0 s depth))
+(function solve-renamed (goal s depth r)
+	(flatten (map (lambda (s2) (solve-goals (get 1 r) s2 (+ depth 1)))
+				  (unify-as-list goal (get 0 r) s))))
+(function solve-one-rule (goal s depth rule)
+	(solve-renamed goal s depth (rename rule (fresh-suffix))))
+(function solve-rules (goal s depth i)
+	(if (= i (length *base*))
+		(list)
+		(concat
+			(solve-one-rule goal s depth (get i *base*))
+			(solve-rules goal s depth (+ i 1)))))
+(function query (goal)
+	(map (lambda (s) (resolve goal s))
+		 (solve-goals (list goal) (list) 0)))
+
+;; User functions
+
+; Add a rule to the base and send it back
+(function inferno-add (r)
+	(do (set! *base* (concat *base* (list r))) r))
+
+; Reset base
+(function inferno-reset () (set! *base* (list)))
+
+; Create and save a fact in the base
+(defmacro inferno-fact (pattern)
+	`(inferno-add (list (quote ,pattern) (list))))
+
+; Create and save a rule in the base
+(defmacro inferno-rule (head &rest body)
+	`(inferno-add (list (quote ,head) (quote ,body))))
+
+; Add multiple facts
+(defmacro inferno-facts (&rest pattern)
+	`(do ,@(map (lambda (p) (list 'inferno-fact p)) pattern)))
+
+; Ask inferno giving a goal
+(defmacro inferno-ask (goal)
+  `(query (quote ,goal)))
+
+;; Missing:
+; - inferno-suppose: let the user add another variable temporarly into the base

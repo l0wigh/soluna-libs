@@ -3,3 +3,5 @@
 (include "json/json.luna")
 (writeln "")
 (include "math/math.luna")
+(writeln "")
+(include "inferno/inferno.luna")

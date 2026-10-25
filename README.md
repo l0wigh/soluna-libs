@@ -12,6 +12,7 @@ This will only work in Soluna project folders.
 - [random](https://github.com/l0wigh/soluna-libs/tree/master/libs/random)
 - [json](https://github.com/l0wigh/soluna-libs/tree/master/libs/json)
 - [format](https://github.com/l0wigh/soluna-libs/tree/master/libs/format)
+- [inferno](https://github.com/l0wigh/soluna-libs/tree/master/libs/inferno)
 
 ## Your library here ?
 

@@ -1,0 +1,280 @@
+(include "../tester.luna")
+(include "../../libs/inferno/inferno.luna")
+
+(tester "Inferno" "is-variable? on ?x" (is-variable? '?x) true)
+(tester "Inferno" "is-variable? on a regular symbol" (is-variable? 'bob) false)
+(tester "Inferno" "is-variable? on an integer" (is-variable? 3) false)
+(tester "Inferno" "is-variable? on a list" (is-variable? '(?x)) false)
+
+(tester "Inferno" "is-list? on a list" (is-list? '(a b)) true)
+(tester "Inferno" "is-list? on a symbol" (is-list? 'a) false)
+(tester "Inferno" "is-integer? on an integer" (is-integer? 5) true)
+(tester "Inferno" "is-integer? on a list" (is-integer? '(1)) false)
+
+(tester "Inferno" "same-length? true" (same-length? '(a b) '(c d)) true)
+(tester "Inferno" "same-length? false" (same-length? '(a b) '(c)) false)
+
+(tester "Inferno" "flatten a list of lists" (flatten (list (list 1 2) (list) (list 3))) '(1 2 3))
+(tester "Inferno" "flatten an empty list" (flatten (list)) (list))
+
+(tester "Inferno" "rename a variable" (rename '?x "/1") '?x/1)
+(tester "Inferno" "rename leaves constants alone" (rename 'bob "/1") 'bob)
+(tester "Inferno" "rename inside a nested list"
+	(rename '(f ?x (g ?y a)) "/2")
+	'(f ?x/2 (g ?y/2 a)))
+
+(tester "Inferno" "fresh-suffix returns different values"
+	(= (fresh-suffix) (fresh-suffix))
+	false)
+
+(tester "Inferno" "walk on a constant" (walk 'bob (list)) 'bob)
+(tester "Inferno" "walk on a free variable" (walk '?x (list)) '?x)
+(tester "Inferno" "walk follows a chain"
+	(walk '?y '((?y ?x) (?x bob)))
+	'bob)
+(tester "Inferno" "walk returns the list as is (head only)"
+	(walk '?y '((?y ?a) (?x bob) (?a (?b ?x))))
+	'(?b ?x))
+(tester "Inferno" "resolve goes down into lists"
+	(resolve '?y '((?y ?a) (?x bob) (?a (?b ?x))))
+	'(?b bob))
+(tester "Inferno" "resolve on nested lists"
+	(resolve '(?x (?y)) '((?x a) (?y b)))
+	'(a (b)))
+(tester "Inferno" "resolve with no bindings" (resolve '(?x b) (list)) '(?x b))
+
+(tester "Inferno" "bob / bob" (unify 'bob 'bob (list)) (list))
+(tester "Inferno" "bob / alice fails" (unify 'bob 'alice (list)) FAIL)
+(tester "Inferno" "?x / bob" (unify '?x 'bob (list)) '((?x bob)))
+(tester "Inferno" "bob / ?x (reverse order)" (unify 'bob '?x (list)) '((?x bob)))
+(tester "Inferno" "lists with variables"
+	(unify '(?x alice) '(bob ?y) (list))
+	'((?x bob) (?y alice)))
+(tester "Inferno" "existing substitution is used"
+	(unify '?x 'bob '((?x alice)))
+	FAIL)
+(tester "Inferno" "variable chain"
+	(unify '?x '?y '((?y bob)))
+	'((?y bob) (?x bob)))
+(tester "Inferno" "different lengths" (unify '(?x ?y) '(a b c) (list)) FAIL)
+(tester "Inferno" "binding propagates between pairs"
+	(unify '(?x ?x) '(a b) (list))
+	FAIL)
+(tester "Inferno" "same variable twice, same value"
+	(unify '(?x ?x) '(a a) (list))
+	'((?x a)))
+(tester "Inferno" "?x / ?x creates no binding" (unify '?x '?x (list)) (list))
+(tester "Inferno" "nested lists"
+	(unify '(a (?x b)) '(a (c ?y)) (list))
+	'((?x c) (?y b)))
+(tester "Inferno" "different types do not crash" (unify 'bob '(a b) (list)) FAIL)
+(tester "Inferno" "failure propagated through s" (unify 'a 'a FAIL) FAIL)
+(tester "Inferno" "integer against integer" (unify 3 3 (list)) (list))
+(tester "Inferno" "different integer" (unify 3 4 (list)) FAIL)
+
+(tester "Inferno" "occurs? direct" (occurs? '?x '(a ?x) (list)) true)
+(tester "Inferno" "occurs? false" (occurs? '?x '(a ?y) (list)) false)
+(tester "Inferno" "occurs? through walk" (occurs? '?x '(a ?y) '((?y ?x))) true)
+(tester "Inferno" "unify rejects ?x = (a ?x)" (unify '?x '(a ?x) (list)) FAIL)
+(tester "Inferno" "no false positive" (unify '?x '(a ?y) (list)) '((?x (a ?y))))
+(tester "Inferno" "indirect cycle"
+	(unify '(?x ?y) '(?y (a ?x)) (list))
+	FAIL)
+
+(inferno-reset)
+(tester "Inferno" "empty base after reset" (length *base*) 0)
+(inferno-fact (parent alice bob))
+(tester "Inferno" "one fact added" (length *base*) 1)
+(tester "Inferno" "fact format: (head ())" *base* (list (list '(parent alice bob) (list))))
+(inferno-rule (grand-parent ?x ?z) (parent ?x ?y) (parent ?y ?z))
+(tester "Inferno" "rule format: (head body)"
+	(get 1 (get 1 *base*))
+	'((parent ?x ?y) (parent ?y ?z)))
+(tester "Inferno" "inferno-add returns the rule"
+	(inferno-add (list '(foo a) (list)))
+	(list '(foo a) (list)))
+(inferno-reset)
+(inferno-facts (a 1) (b 2) (c 3))
+(tester "Inferno" "inferno-facts adds several facts" (length *base*) 3)
+(inferno-reset)
+(tester "Inferno" "reset empties the base again" (length *base*) 0)
+
+(inferno-reset)
+(inferno-facts (parent alice bob) (parent bob carl) (parent bob dana))
+
+(tester "Inferno" "several solutions"
+	(inferno-ask (parent bob ?x))
+	'((parent bob carl) (parent bob dana)))
+(tester "Inferno" "variable in first position"
+	(inferno-ask (parent ?x carl))
+	'((parent bob carl)))
+(tester "Inferno" "question without variable, true"
+	(inferno-ask (parent alice bob))
+	'((parent alice bob)))
+(tester "Inferno" "question without variable, false"
+	(inferno-ask (parent alice carl))
+	(list))
+(tester "Inferno" "no solution"
+	(inferno-ask (parent carl ?x))
+	(list))
+(tester "Inferno" "two variables: all facts"
+	(inferno-ask (parent ?x ?y))
+	'((parent alice bob) (parent bob carl) (parent bob dana)))
+(tester "Inferno" "unknown predicate"
+	(inferno-ask (unknown ?x))
+	(list))
+(tester "Inferno" "number of solutions"
+	(length (inferno-ask (parent ?x ?y)))
+	3)
+
+(inferno-rule (grand-parent ?x ?z) (parent ?x ?y) (parent ?y ?z))
+
+(tester "Inferno" "simple rule"
+	(inferno-ask (grand-parent alice ?q))
+	'((grand-parent alice carl) (grand-parent alice dana)))
+(tester "Inferno" "rule, variable in first position"
+	(inferno-ask (grand-parent ?g carl))
+	'((grand-parent alice carl)))
+(tester "Inferno" "rule with no solution"
+	(inferno-ask (grand-parent bob ?q))
+	(list))
+(tester "Inferno" "same variable names as the rule (rename test)"
+	(inferno-ask (grand-parent ?x ?z))
+	'((grand-parent alice carl) (grand-parent alice dana)))
+(tester "Inferno" "rule, fully closed question, true"
+	(inferno-ask (grand-parent alice dana))
+	'((grand-parent alice dana)))
+(tester "Inferno" "rule, fully closed question, false"
+	(inferno-ask (grand-parent alice bob))
+	(list))
+
+(inferno-rule (sibling ?a ?b) (parent ?p ?a) (parent ?p ?b) (not (equal ?a ?b)))
+
+(tester "Inferno" "sibling with one unknown"
+	(inferno-ask (sibling carl ?s))
+	'((sibling carl dana)))
+(tester "Inferno" "sibling with two unknowns"
+	(inferno-ask (sibling ?a ?b))
+	'((sibling carl dana) (sibling dana carl)))
+(tester "Inferno" "nobody is their own sibling"
+	(inferno-ask (sibling carl carl))
+	(list))
+(tester "Inferno" "equal with a variable"
+	(inferno-ask (equal ?x bob))
+	'((equal bob bob)))
+(tester "Inferno" "equal fails"
+	(inferno-ask (equal bob alice))
+	(list))
+(tester "Inferno" "not of an absent fact"
+	(inferno-ask (not (parent alice carl)))
+	'((not (parent alice carl))))
+(tester "Inferno" "not of a present fact"
+	(inferno-ask (not (parent alice bob)))
+	(list))
+(tester "Inferno" "double negation"
+	(inferno-ask (not (not (parent alice bob))))
+	'((not (not (parent alice bob)))))
+(tester "Inferno" "not of a false equal"
+	(inferno-ask (not (equal bob alice)))
+	'((not (equal bob alice))))
+(tester "Inferno" "not of a true equal"
+	(inferno-ask (not (equal bob bob)))
+	(list))
+
+(inferno-reset)
+(inferno-fact (same ?x ?x))
+
+(tester "Inferno" "same variable in the head"
+	(inferno-ask (same a ?y))
+	'((same a a)))
+(tester "Inferno" "different constants"
+	(inferno-ask (same a b))
+	(list))
+(tester "Inferno" "identical constants"
+	(inferno-ask (same a a))
+	'((same a a)))
+(tester "Inferno" "occurs check inside the solver"
+	(inferno-ask (same ?x (f ?x)))
+	(list))
+
+(inferno-reset)
+(inferno-fact (plus zero ?n ?n))
+(inferno-rule (plus (s ?a) ?b (s ?c)) (plus ?a ?b ?c))
+
+(tester "Inferno" "0 + 0"
+	(inferno-ask (plus zero zero ?r))
+	'((plus zero zero zero)))
+(tester "Inferno" "1 + 1 = ?"
+	(inferno-ask (plus (s zero) (s zero) ?r))
+	'((plus (s zero) (s zero) (s (s zero)))))
+(tester "Inferno" "2 + 1 = ?"
+	(inferno-ask (plus (s (s zero)) (s zero) ?r))
+	'((plus (s (s zero)) (s zero) (s (s (s zero))))))
+(tester "Inferno" "1 + 1 = 1 is false"
+	(inferno-ask (plus (s zero) (s zero) (s zero)))
+	(list))
+(tester "Inferno" "inversion: x + y = 2"
+	(inferno-ask (plus ?x ?y (s (s zero))))
+	'((plus zero (s (s zero)) (s (s zero)))
+	  (plus (s zero) (s zero) (s (s zero)))
+	  (plus (s (s zero)) zero (s (s zero)))))
+(tester "Inferno" "inversion: 1 + ? = 3"
+	(inferno-ask (plus (s zero) ?y (s (s (s zero)))))
+	'((plus (s zero) (s (s zero)) (s (s (s zero))))))
+(tester "Inferno" "number of decompositions of 3"
+	(length (inferno-ask (plus ?x ?y (s (s (s zero))))))
+	4)
+
+(inferno-reset)
+(inferno-facts (parent alice bob) (parent bob carl) (parent carl dana))
+(inferno-rule (ancestor ?x ?y) (parent ?x ?y))
+(inferno-rule (ancestor ?x ?y) (parent ?x ?z) (ancestor ?z ?y))
+
+(tester "Inferno" "alice's descendants"
+	(inferno-ask (ancestor alice ?q))
+	'((ancestor alice bob) (ancestor alice carl) (ancestor alice dana)))
+(tester "Inferno" "dana's ancestors"
+	(inferno-ask (ancestor ?x dana))
+	'((ancestor carl dana) (ancestor alice dana) (ancestor bob dana)))
+(tester "Inferno" "relation true at distance 3"
+	(inferno-ask (ancestor alice dana))
+	'((ancestor alice dana)))
+(tester "Inferno" "reverse relation is false"
+	(inferno-ask (ancestor dana alice))
+	(list))
+(tester "Inferno" "all pairs"
+	(length (inferno-ask (ancestor ?x ?y)))
+	6)
+
+(inferno-reset)
+(inferno-rule (loop ?x) (loop ?x))
+
+(tester "Inferno" "infinite recursion: must terminate"
+	(inferno-ask (loop a))
+	(list))
+
+(inferno-reset)
+(inferno-fact (ok a))
+(inferno-rule (loop2 ?x) (loop2 ?x))
+(inferno-rule (loop2 ?x) (ok ?x))
+
+(tester "Inferno" "looping rule + valid rule: a solution is found"
+	(> (length (inferno-ask (loop2 a))) 0) true)
+
+(tester "Inferno" "looping rule + valid rule: the solution is found"
+    (get 0 (inferno-ask (loop2 a)))
+    '(loop2 a))
+
+(inferno-reset)
+(inferno-facts (color red) (color blue))
+
+(tester "Inferno" "first query"
+	(inferno-ask (color ?c))
+	'((color red) (color blue)))
+(tester "Inferno" "same query a second time, same result"
+	(inferno-ask (color ?c))
+	'((color red) (color blue)))
+(tester "Inferno" "queries did not modify the base" (length *base*) 2)
+
+(inferno-reset)
+(tester "Inferno" "empty base, empty result" (inferno-ask (color ?c)) (list))

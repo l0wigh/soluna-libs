@@ -3,3 +3,4 @@ json:json.luna
 random:random.luna
 format:format.luna
 binary:binary.luna
+inferno:inferno.luna
